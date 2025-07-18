@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: Build Docker Image
         working-directory: workspace/app/
-        run: docker build -t sectani/java-app:latest .
+        run: docker build --no-cache -t sectani/java-app:latest .
 
       - name: Login to Docker Hub
         run: |
