@@ -64,5 +64,4 @@ jobs:
             kubectl apply -f deployment.yaml
   
         - name: Debug
-          run: |
-            kubectl get nodes
+          run: kubectl get nodes
