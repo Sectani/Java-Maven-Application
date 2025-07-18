@@ -35,3 +35,34 @@ jobs:
 
       - name: Save Artifact
         run: cp target/*.jar /artifacts/
+
+  docker_push:
+    depends-on: build
+    steps:
+      - name: Build Docker Image
+        working-directory: workspace/app/
+        run: docker build -t sectani/java-app:latest .
+
+      - name: Login to Docker Hub
+        run: |
+          echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_EAMIL" --password-stdin
+
+      - name: Push Docker Image
+        run: docker push sectani/java-app:latest
+
+  Setup Kubeconfig:
+      depends-on: docker_push
+      steps:
+        - name: Setup Kubeconfig
+          working-directory: workspace/app
+          run: |
+            mkdir -p ~/.kube
+            echo "$KUBECONFIG_CONTENT" > ~/.kube/config
+  
+        - name: Deploy
+          run: |
+            kubectl apply -f deployment.yaml
+  
+        - name: Debug
+          run: |
+            kubectl get nodes
